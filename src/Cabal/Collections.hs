@@ -29,12 +29,10 @@ instance Show a => Display (Filter a) where
 data Collection a
   = Empty
   | Everything
-  -- | Not (Collection a)
   | Combine (ShadowMode a) (Collection a) (Collection a)
   | Subtract (Collection a) (Collection a)
   | FilterBySource (Filter SourceName) (Collection a)
   | FilterByName (Filter PackageName) (Collection a)
-  -- | FilterByAuthor (Filter AuthorName) (Collection a)
   | SingleVersionConstraint PkgVersionConstraint
   deriving (Show, Eq, Ord)
 
