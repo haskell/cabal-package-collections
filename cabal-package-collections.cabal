@@ -44,7 +44,7 @@ test-suite cabal-package-collections-spec
   build-tool-depends:
     hspec-discover:hspec-discover
   build-depends:
-    base ^>=4.20.0.0,
+    base >=4.18,
     cabal-package-collections,
     hspec,
     hedgehog,

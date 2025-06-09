@@ -38,10 +38,12 @@ data Collection a
   | SingleVersionConstraint PkgVersionConstraint
   deriving (Show, Eq, Ord)
 
+data PkgVersionConstraint =
+  PkgVersionConstraint PackageName VersionRange
+  deriving (Show, Eq, Ord)
+
 -- package filters on (source, name) are sane
 -- package filters on package information that may be different between versions are *wonky*
-
-
 
 instance Display (Collection ()) where
   displayBuilder = \case
@@ -52,7 +54,7 @@ instance Display (Collection ()) where
     Combine ShadowPerNameVersion l r ->
       "(" <> displayBuilder l <> " `nameVersionUnion` " <> displayBuilder r <> ")"
     Combine (Total ()) l r ->
-      "(" <> displayBuilder l <> " `union*` " <> displayBuilder r <> ")"
+      "(" <> displayBuilder l <> " `union't`" <> displayBuilder r <> ")"
     Subtract l r ->
       "(" <> displayBuilder l <> " \\ " <> displayBuilder r <> ")"
     FilterBySource f c ->
@@ -62,37 +64,17 @@ instance Display (Collection ()) where
     SingleVersionConstraint (PkgVersionConstraint n vr) ->
       displayBuilder (ShowInstance n) <> " { " <> displayBuilder (ShowInstance vr) <> " }"
 
-getConstraints :: Collection () -> PackageName -> [SourceName] -> [(SourceName, [Constraint])]
-
-testPackage :: Collection () -> PackageName -> PackageVersion -> [SourceName] -> [SourceName]
-testPackage = _
-
-testPackage' :: Collection () -> [KnownPackage] -> [KnownPackage]
-testPackage' = _
-
-simplify :: Collection a -> Collection a
-simplify = \case
-  Combine _ x Empty -> x
-  Combine _ Empty x -> x
-  Combine _ Everything _ -> Everything
-  Combine _ _ Everything -> Everything
-
-  Empty -> Empty
-  Everything -> Everything
-  Combine sm c1 c2 ->
-    Combine sm (simplify c1) (simplify c2)
-  Subtract c1 c2 ->
-    Subtract (simplify c1) (simplify c2)
-  FilterBySource f c -> FilterBySource f (simplify c)
-  FilterByName f c -> FilterByName f (simplify c)
-  SingleVersionConstraint vc -> SingleVersionConstraint vc
+-- getConstraints :: Collection () -> PackageName -> [SourceName] -> [(SourceName, [Constraint])]
+-- getConstraints = undefined
+--
+-- testPackage :: Collection () -> PackageName -> PackageVersion -> [SourceName] -> [SourceName]
+-- testPackage = _
+--
+-- testPackage' :: Collection () -> [KnownPackage] -> [KnownPackage]
+-- testPackage' = _
 
 newtype SourceName = SourceName Text
   deriving (Show, Eq, Ord, IsString)
-
-data PkgVersionConstraint =
-  PkgVersionConstraint PackageName VersionRange
-  deriving (Show, Eq, Ord)
 
 wat :: Collection ()
 wat =

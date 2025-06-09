@@ -1,3 +1,7 @@
 packages: .
 
 multi-repl: True
+
+tests: True
+
+with-compiler: ghc-9.10.1
